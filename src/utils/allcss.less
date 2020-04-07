@@ -1,17 +1,18 @@
 .first-title {
-    font-size: 16px;
+    font-size  : 16px;
     font-weight: bolder;
 }
 
 .second-title {
-    font-size: 10px;
-    margin-top: 10px;
+    font-size  : 10px;
+    margin-top : 10px;
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     font-weight: bold;
 }
-.small-title{
-    font-size:7px;
-    margin: 5px 0 0 20px;
+
+.small-title {
+    font-size: 7px;
+    margin   : 5px 0 0 20px;
 }
 
 .radio-text {
@@ -19,9 +20,10 @@
 }
 
 .text-info {
-    font-size: 7px;
-    margin-top: 5px;
-    white-space: nowrap;/*div内容不换行*/
+    font-size  : 7px;
+    margin-top : 5px;
+    white-space: nowrap;
+    /*div内容不换行*/
 }
 
 /* radio选中状态 */
@@ -39,14 +41,26 @@
 /* radio选中后div样式 */
 
 .van-radio--horizontal {
-    height: 20px;
-    margin-right: 12px;
-    width: 150px;
+    height       : 20px;
+    margin-right : 12px;
+    width        : 150px;
     border-radius: 3px;
 }
 
-.van-field__error-message{
-    // margin-top: -10px;
-    height: 80px;
-    font-size: 10px;
+// 提交按钮
+.sub {
+    margin: 16px;
+    height: 120px;
+
+    /deep/ .van-button--info {
+        color           : #fff;
+        background-color: #ffe400;
+        border          : 0.02667rem solid #ffe400;
+    }
+
+    /deep/ .van-button__text {
+        color: #000;
+    }
 }
+
+

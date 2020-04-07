@@ -73,7 +73,7 @@ module.exports = {
             postcss:{
                 plugins:[
                     autoprefixer(),
-                    pxotrem({
+                    pxtorem({
                         rootValue: 37.5,
                         propList: ['*']
                     })

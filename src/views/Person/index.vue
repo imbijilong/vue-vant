@@ -4,7 +4,7 @@
       <!-- <img class="demo-img" v-for="(img, index) in imageList" v-lazy="img" :key="index"> -->
       <img class="demo-img" />
     </div>
-    <van-form @submit="onSubmit" validate-first @failed="onFailed">
+    <van-form @submit="onSubmit">
       <div class="addressTitle">
         <div class="third-div">
           <div class="fill-in">
@@ -59,17 +59,16 @@
 
       <div class="s2">
         <div class="second-title">S2. 公民身份号码</div>
-        <div class="levelthird-div">
-          <div class="levelfill-in">
-            <div class="text-info">
-              <van-cell-group>
-                <van-field v-model="idCardNo" input-align="center" :rules="[{ validator, message: '请输入正确的身份证号' }]"/>
-              </van-cell-group>
-            </div>
-          </div>
+        <div class="vanCell">
+          <van-field
+            v-model="idCardNo"
+            input-align="center"
+            :error-message="errMsg.idCardNo"
+            @blur="onBlurCheckCard"
+          />
         </div>
       </div>
-
+      <!-- :rules="[{ validator, message: '请输入正确的身份证号' }]"-->
       <div class="s3">
         <div class="second-title">
           <span class="title">S3.</span> 性别
@@ -215,7 +214,8 @@
           </van-radio-group>
         </div>
       </div>
-      <div style="margin: 16px;">
+
+      <div class="sub">
         <van-button round block type="info" native-type="submit">提交</van-button>
       </div>
     </van-form>
@@ -249,7 +249,10 @@ export default {
       address18: "",
       radios8: "",
       radioc17: "",
-      idCardNo: ""//居民身份证号
+      idCardNo: "", //居民身份证号
+      errMsg: {
+        idCardNo: ""
+      }
     };
   },
   computed: {
@@ -266,85 +269,9 @@ export default {
     ...mapActions({
       queryImgList: "example/queryImgList"
     }),
-    // 校验函数返回 true 表示校验通过，false 表示不通过
-    validator(val) {
-      return /1\d{10}/.test(val);
-    },
-     // 检测身份证
-      onBlurCheckCard() {
-        if(!this.idCardNo) return;
-        let CardId = this.idCardNo;
-        console.log("CardId"+CardId)
-        if(CardId.length == 15) {
-          if(this.is15Card(CardId)) {
-            this.go(CardId.length);
-          }
-          else {
-            return this.$message({type: 'error', message: '您的身份证号有误！请输入你真实的身份证号！'});
-          }
-        } else if (CardId.length == 18) {
-          let a_iden = CardId.split("");
-          console.log("a_iden"+a_iden)
-          if (this.is18Card(CardId) && this.is18CardEnd(a_iden) ) {  // && this.is18CardEnd(a_iden)
-            this.go(CardId.length);
-            return this.is18Card(CardId);
-          }
-          else {
-            return this.$message({type: 'error', message: '您的身份证号有误！请输入你真实的身份证号！'});
-          }
-        } else {
-          return this.$message({type: 'error', message: '您的身份证号有误！请输入你真实的身份证号！'});
-        }
-      },
-
-      is15Card(idCard15){
-        let year =  idCard15.substring(6,8);
-        let month = idCard15.substring(8,10);
-        let day = idCard15.substring(10,12);
-        let temp_date = new Date(year,parseFloat(month)-1,parseFloat(day));
-        if(temp_date.getYear()!=parseFloat(year)||temp_date.getMonth()!=parseFloat(month)-1 ||temp_date.getDate()!=parseFloat(day)) {
-          return false;
-        }else{
-          return true;
-        }
-      },
- 
-      // 检测18位身份证号最后一位是否符合要求
-      is18CardEnd(a_idCard) {
-        let sum = 0;
-        if (a_idCard[17].toLowerCase() == 'x') {
-          a_idCard[17] = 10;
-        }
-        for ( var i = 0; i < 17; i++) {
-          sum += this.Wi[i] * a_idCard[i];
-        }
-        let valCodePosition = sum % 11;
-        if (a_idCard[17] == this.ValideCode[valCodePosition]) {
-          return true;
-        } else {
-          return false;
-        }
-      },
- 
-      // 验证最后一位校正码
-      is18Card(idCard18){
-        let year =  idCard18.substring(6,10);
-        let month = idCard18.substring(10,12);
-        let day = idCard18.substring(12,14);
-        let temp_date = new Date(year,parseFloat(month)-1,parseFloat(day));
-        if(temp_date.getFullYear()!=parseFloat(year)
-          ||temp_date.getMonth()!=parseFloat(month)-1
-          ||temp_date.getDate()!=parseFloat(day)){
-          return false;
-        }else{
-          return true;
-        }
-      },
 
     //获取身份证号的年龄和性别
-    go() {
-      // const val = this.temp["idCardNo"].length; // 获取身份证号长度
-      // const iden = this.temp["idCardNo"]; // 获取身份证号输入框的值
+    onBlurCheckCard() {
       const val = this.idCardNo.length;
       const iden = this.idCardNo;
       let sexNum = null;
@@ -362,8 +289,7 @@ export default {
           (iden.substring(10, 12) === month && iden.substring(12, 14) <= day)
         )
           age++;
-      }
-      if (val === 15) {
+      } else if (val === 15) {
         age = myDate.getFullYear() - iden.substring(6, 8) - 1901;
         sexNum = iden.substring(13, 14);
         if (
@@ -371,8 +297,11 @@ export default {
           (iden.substring(8, 10) === month && iden.substring(10, 12) <= day)
         )
           age++;
+      } else {
+        this.errMsg.idCardNo = "您的身份证号有误！请输入你真实的身份证号!";
+        return false;
       }
-
+      //sex的值需要根据情况而定1, '男'2, '女'3, '未知'
       if (sexNum % 2 === 0) {
         sexNum = 2;
         sex = "女";
@@ -380,25 +309,12 @@ export default {
         sexNum = 1;
         sex = "男";
       }
-      // sex的值需要根据情况而定，，这里协议的值为：
-      // studentSex: new Map([
-      //   [2, '女'],
-      //   [1, '男'],
-      //   [3, '未知']
-      // ]),
-
-      // this.temp["studentSex"] = sex; // 设置表单中性别的值
-      // this.temp["studentAge"] = age; // 设置表单中年龄字段的值
-      console.log("年龄" + age);
-      console.log("性别" + sex);
+      this.errMsg.idCardNo = "";
+      return true;
     },
     onSubmit(values) {
       console.log("submit", values);
     },
-
-    onFailed(errorInfo) {
-      console.log('failed', errorInfo);
-    }
   }
 };
 </script>
@@ -502,15 +418,27 @@ export default {
 }
 .s2 {
   margin-left: 10px;
-  height: 50px;
+  height: 60px;
   //输入框样式
-  /deep/ .van-cell {
-    padding: 0;
-    width: 120px;
-    height: 13px;
-    line-height: 6px;
-    background: #f0f0f0;
-    border-bottom: 1px solid #000000;
+  .vanCell {
+    margin-left: 20px;
+    .van-cell {
+      padding: 1px;
+      background: #f0f0f0;
+      width: 120px;
+      /deep/ .van-field__control {
+        border-bottom: 1px solid #000000;
+        font-size: 11px;
+      }
+      /deep/ .van-field__error-message {
+        font-size: 7px;
+        height: 20px;
+      }
+      //输入框字体大小
+      /deep/ .van-field__control {
+        font-size: 7px;
+      }
+    }
   }
 }
 .s3,
@@ -538,7 +466,7 @@ export default {
 }
 .s8 {
   margin-left: 10px;
-  height: 150px;
+  height: 90px;
   .h14radio {
     display: flex;
     margin-bottom: 10px;

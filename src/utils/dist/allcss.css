@@ -1,0 +1,50 @@
+.first-title {
+  font-size: 16px;
+  font-weight: bolder;
+}
+.second-title {
+  font-size: 10px;
+  margin-top: 10px;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-weight: bold;
+}
+.small-title {
+  font-size: 7px;
+  margin: 5px 0 0 20px;
+}
+.radio-text {
+  font-size: 7px;
+}
+.text-info {
+  font-size: 7px;
+  margin-top: 5px;
+  white-space: nowrap;
+  /*div内容不换行*/
+}
+/* radio选中状态 */
+.van-radio[aria-checked="true"] {
+  background: #ffe400;
+}
+/* radio未选中状态 */
+.van-radio[aria-checked="false"] {
+  background: #fffbf0;
+}
+/* radio选中后div样式 */
+.van-radio--horizontal {
+  height: 20px;
+  margin-right: 12px;
+  width: 150px;
+  border-radius: 3px;
+}
+.sub {
+  margin: 16px;
+  height: 120px;
+}
+.sub /deep/ .van-button--info {
+  color: #fff;
+  background-color: #ffe400;
+  border: 0.02667rem solid #ffe400;
+}
+.sub /deep/ .van-button__text {
+  color: #000;
+}
